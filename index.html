@@ -127,17 +127,18 @@ function expose() {
         p.vx = Math.cos(angle) * velocity;
         p.vy = Math.sin(angle) * velocity;
         
-        // --- NEW GRADIENT LOGIC ---
-        // This creates a spectrum from Magenta to Cyan to Gold
-        const hue = Math.random() * 60 + 280; // Purples and Cyans
-        const goldChance = Math.random() > 0.8; // 20% chance for a "spark"
-        
-        if (goldChance) {
-            p.color = `hsl(45, 100%, 70%)`; // Radiant Gold
-        } else {
-            p.color = `hsl(${hue}, 80%, 60%)`; // Neon Gradient
-        }
+        // --- GRADIENT UPDATE: Electric Purple to Neon Cyan ---
+        const hue = Math.random() * 60 + 270; 
+        p.color = `hsl(${hue}, 90%, 65%)`; 
     });
+
+    setTimeout(() => {
+        isExposed = false;
+        count = "WIN";
+        morph("WIN");
+        msg.innerText = "System Exposed";
+    }, 1500);
+}
 
     setTimeout(() => {
         isExposed = false;
