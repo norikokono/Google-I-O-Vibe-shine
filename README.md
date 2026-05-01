@@ -13,6 +13,7 @@ The experience takes the user through a rhythmic countdown from **10 to 1**. Rat
 - **The "Exposure" Phase:** Upon reaching the final count, the system triggers a high-velocity physics explosion, simulating a digital "overload" or light exposure.
 - **DPR Scaling:** Optimized for Retina and 4K displays using `devicePixelRatio` scaling to ensure razor-sharp visuals on all devices.
 - **Performance Optimized:** Uses an offscreen canvas sampling method to maintain a steady 60FPS even during complex reconfigurations.
+- **Procedural Audio:** Optimized for sound—click anywhere on the screen to initialize the auditory synchronization.
 
 ## 🛠️ Technical Stack
 - **Engine:** Vanilla JavaScript / HTML5 Canvas
