@@ -120,12 +120,23 @@ function morph(content) {
 function expose() {
     isExposed = true;
     msg.innerText = "Sequence Complete // Exposure Active";
+    
     particles.forEach(p => {
         const angle = Math.random() * Math.PI * 2;
         const velocity = Math.random() * 20 + 10;
         p.vx = Math.cos(angle) * velocity;
         p.vy = Math.sin(angle) * velocity;
-        p.color = "#fff";
+        
+        // --- NEW GRADIENT LOGIC ---
+        // This creates a spectrum from Magenta to Cyan to Gold
+        const hue = Math.random() * 60 + 280; // Purples and Cyans
+        const goldChance = Math.random() > 0.8; // 20% chance for a "spark"
+        
+        if (goldChance) {
+            p.color = `hsl(45, 100%, 70%)`; // Radiant Gold
+        } else {
+            p.color = `hsl(${hue}, 80%, 60%)`; // Neon Gradient
+        }
     });
 
     setTimeout(() => {
