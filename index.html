@@ -33,7 +33,6 @@
             display: block; 
             position: relative; 
             z-index: 2; 
-            /* Remove filters that cause flickering */
         }
 
         #ui {
@@ -55,34 +54,128 @@ let w, h, dpr, particles = [];
 let count = 10;
 let isExposed = false;
 
-// ... [Keep your Particle class and Morph function exactly as they were] ...
+class Particle {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.vx = (Math.random() - 0.5) * 4;
+        this.vy = (Math.random() - 0.5) * 4;
+        this.life = 1;
+        this.decay = Math.random() * 0.01 + 0.005;
+    }
+
+    update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.life -= this.decay;
+        this.vx *= 0.98;
+        this.vy *= 0.98;
+    }
+
+    draw() {
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.life * 0.5})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+function Morph(from, to, duration = 500) {
+    let start = Date.now();
+    let startParticles = particles.length;
+
+    let morphInterval = setInterval(() => {
+        let elapsed = Date.now() - start;
+        let progress = Math.min(elapsed / duration, 1);
+
+        // Create transition particles
+        if (progress < 1) {
+            for (let i = 0; i < 3; i++) {
+                particles.push(new Particle(
+                    from.x + (to.x - from.x) * progress,
+                    from.y + (to.y - from.y) * progress
+                ));
+            }
+        }
+
+        if (progress >= 1) {
+            clearInterval(morphInterval);
+        }
+    }, 16);
+}
+
+function drawNumber(num, x, y, size = 100) {
+    ctx.font = `bold ${size}px 'Inter', sans-serif`;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(num, x, y);
+}
 
 function resize() {
     dpr = window.devicePixelRatio || 1;
-    w = window.innerWidth; h = window.innerHeight;
-    canvas.width = w * dpr; canvas.height = h * dpr;
-    canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+    w = window.innerWidth; 
+    h = window.innerHeight;
+    canvas.width = w * dpr; 
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px'; 
+    canvas.style.height = h + 'px';
     ctx.scale(dpr, dpr);
 }
 
+let countdown = 10;
+let lastUpdate = Date.now();
+
 function loop() {
-    // FIX: Clear the canvas with clearRect instead of fillRect(rgba)
-    // This stops the "vibration" because it's no longer stacking black layers
     ctx.clearRect(0, 0, w, h); 
     
-    // To keep the "trail" effect without breaking gradients, 
-    // we use a global alpha for particles instead of a black overlay
-    particles.forEach(p => { 
+    // Update particles
+    particles.forEach((p, i) => { 
         p.update(); 
-        p.draw(); 
+        p.draw();
+        if (p.life <= 0) {
+            particles.splice(i, 1);
+        }
     });
+
+    // Draw countdown number
+    drawNumber(countdown, w / 2, h / 2, 120);
+
+    // Update countdown every 1 second
+    if (Date.now() - lastUpdate >= 1000) {
+        countdown--;
+        lastUpdate = Date.now();
+
+        if (countdown < 0) {
+            isExposed = true;
+            document.getElementById('msg').textContent = 'EXPOSURE COMPLETE';
+            countdown = 0;
+        } else {
+            document.getElementById('msg').textContent = `COUNTING DOWN: ${countdown}`;
+        }
+
+        // Create particle burst on number change
+        for (let i = 0; i < 5; i++) {
+            particles.push(new Particle(w / 2, h / 2));
+        }
+    }
+
     requestAnimationFrame(loop);
 }
 
-// ... [Keep your timer and event listeners] ...
+window.addEventListener('resize', resize);
 
 resize();
 loop();
+
+// Allow reset with click
+canvas.addEventListener('click', () => {
+    countdown = 10;
+    isExposed = false;
+    particles = [];
+    document.getElementById('msg').textContent = 'INITIALIZING...';
+    lastUpdate = Date.now();
+});
 </script>
 </body>
 </html>
