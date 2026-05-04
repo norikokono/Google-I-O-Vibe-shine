@@ -7,23 +7,9 @@
     <style>
         body { 
             margin: 0; 
-            background: #000; 
+            background: linear-gradient(180deg, #000000, #111111, #222222);
             overflow: hidden; 
             font-family: 'Inter', sans-serif; 
-        }
-
-        /* The Orange Layer - Solid and static to prevent vibration */
-        #background-layer {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            background: 
-                radial-gradient(circle at 0% 0%, #3a1a00 0%, transparent 25%),
-                radial-gradient(circle at 100% 0%, #2a1200 0%, transparent 20%),
-                radial-gradient(circle at 100% 100%, #4a2200 0%, transparent 30%),
-                radial-gradient(circle at 0% 100%, #2f1500 0%, transparent 22%),
-                #000;
         }
 
         #texture-overlay {
@@ -51,7 +37,6 @@
     </style>
 </head>
 <body>
-    <div id="background-layer"></div>
     <div id="texture-overlay" class="grid"></div>
     <div id="ui">STATUS: <span id="msg">INITIALIZING...</span></div>
     <canvas id="c"></canvas>
